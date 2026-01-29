@@ -1,4 +1,4 @@
-# Glamap 🌍✨  
+# Glamap  
 **Location-Based Beauty Services Platform**
 
 **Personal Project | Full-Stack Web Application | Jan 2026**  
@@ -6,14 +6,14 @@
 
 ---
 
-## 📌 Project Overview
+## Project Overview
 Glamap is a location-based web application that connects freelance beauty service providers with clients across Australia. The platform addresses visibility challenges faced by independent beauty professionals while giving clients an intuitive, map-driven way to discover nearby, trustworthy providers.
 
 This project was built end-to-end as a personal portfolio project to demonstrate modern full-stack development, secure authentication, and scalable system design.
 
 ---
 
-## 🚀 Key Features
+## Key Features
 - **Interactive Map Discovery**  
   Leaflet.js-powered map with custom markers covering 160+ Sydney suburbs and provider locations
 - **Advanced Search & Filtering**  
@@ -29,7 +29,7 @@ This project was built end-to-end as a personal portfolio project to demonstrate
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 **Frontend**
 - React 18 + TypeScript
 - Vite
@@ -52,7 +52,7 @@ This project was built end-to-end as a personal portfolio project to demonstrate
 
 ---
 
-## 🧠 My Contributions & Learnings
+## My Contributions & Learnings
 - **Design & Ideation**  
   Conceptualized the product, designed the UI/UX, and defined all core features and workflows
 - **Architecture & Research**  
@@ -66,7 +66,7 @@ This project was built end-to-end as a personal portfolio project to demonstrate
 
 ---
 
-## 💡 Skills Demonstrated
+## Skills Demonstrated
 - Full-Stack Web Development (React, Express.js, PostgreSQL)
 - REST API Design & Integration
 - Authentication & Security (OIDC)
@@ -78,5 +78,5 @@ This project was built end-to-end as a personal portfolio project to demonstrate
 
 ---
 
-## 📈 Impact
+## Impact
 Delivered a fully functional, production-style web platform demonstrating modern development practices from concept to deployment, addressing a real-world need for freelance beauty professionals.
