@@ -80,3 +80,19 @@ This project was built end-to-end as a personal portfolio project to demonstrate
 
 ## Impact
 Delivered a fully functional, production-style web platform demonstrating modern development practices from concept to deployment, addressing a real-world need for freelance beauty professionals.
+
+---
+
+## Web App Preview
+
+**Homepage**
+![Glamap Homepage](client\public\explore-page.png)
+
+**Provider Profile**
+![Provider Profile](client\public\provider-profile.png)
+
+**Messaging Feature**
+![IMessaging Feature](client\public\messaging-feature.png)
+
+**Edit Profile**
+![Edit Profile](client\public\edit-profile.png)
