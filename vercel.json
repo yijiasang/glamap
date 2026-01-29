@@ -15,7 +15,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.clerk.com https://clerk.glamap.site https://accounts.google.com https://accounts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://*.clerk.com https://clerk.glamap.site https://accounts.google.com https://glamap.onrender.com https:; frame-src https://*.clerk.com https://clerk.glamap.site https://accounts.google.com https://accounts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self' https://*.clerk.com https://clerk.glamap.site https://accounts.google.com"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.clerk.com https://clerk.glamap.site https://accounts.google.com https://accounts.gstatic.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://*.clerk.com https://clerk.glamap.site https://accounts.google.com https://glamap.onrender.com https:; frame-src https://*.clerk.com https://clerk.glamap.site https://accounts.google.com https://accounts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self' https://*.clerk.com https://clerk.glamap.site https://accounts.google.com"
         }
       ]
     }
