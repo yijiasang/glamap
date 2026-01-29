@@ -86,13 +86,13 @@ Delivered a fully functional, production-style web platform demonstrating modern
 ## Web App Preview
 
 **Homepage**
-![Glamap Homepage](client\public\explore-page.png)
+![Glamap Homepage](client/public/explore-page.png)
 
 **Provider Profile**
-![Provider Profile](client\public\provider-profile.png)
+![Provider Profile](client/public/provider-profile.png)
 
 **Messaging Feature**
-![IMessaging Feature](client\public\messaging-feature.png)
+![Messaging Feature](client/public/messaging-feature.png)
 
 **Edit Profile**
-![Edit Profile](client\public\edit-profile.png)
+![Edit Profile](client/public/edit-profile.png)
