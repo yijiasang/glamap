@@ -24,6 +24,17 @@ app.use(
 // Skip JSON parsing for file uploads
 app.use('/api/uploads/upload', express.raw({ type: '*/*', limit: '10mb' }));
 
+// CORS for direct upload endpoint (used by presigned URLs)
+app.use('/api/uploads/upload', (req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'PUT,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+  next();
+});
+
 app.use(express.urlencoded({ extended: false }));
 
 // Serve static profile images
