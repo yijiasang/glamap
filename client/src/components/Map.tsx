@@ -132,8 +132,65 @@ export default function Map({ profiles, selectedId, hoveredProfileId, center = [
             position={[lat, lng]}
             icon={hoveredProfileId === profile.id ? HighlightedPinkIcon : PinkIcon}
             zIndexOffset={hoveredProfileId === profile.id ? 1000 : 0}
-          />
-          
+          >
+            <Popup className="custom-popup" closeButton={false}>
+              <div className="flex flex-col">
+                <div className="p-4 relative bg-card">
+                  <div className="absolute -top-8 left-4 rounded-full border-4 border-card bg-muted w-16 h-16 flex items-center justify-center text-xl font-display font-bold text-muted-foreground overflow-hidden">
+                    {profile.profileImageUrl ? (
+                      <img src={profile.profileImageUrl} alt={profile.username} className="w-full h-full object-cover" />
+                    ) : (
+                      profile.username[0].toUpperCase()
+                    )}
+                  </div>
+                  
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <h3 className="font-display font-bold text-lg">{profile.username}</h3>
+                      <p className="text-xs text-muted-foreground capitalize flex items-center gap-1">
+                        <MapPin size={10} /> {profile.locationType?.replace('_', ' ')}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-1 bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full text-xs font-bold">
+                      <Star size={10} className="fill-current" />
+                      {profile.rating?.toFixed(1) || "New"}
+                    </div>
+                  </div>
+                  
+                  <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                    {profile.bio || "No bio available."}
+                  </p>
+                  
+                  <div className="flex flex-wrap gap-1 mb-4">
+                    {(() => {
+                      // Get unique service names for popup display
+                      const uniqueServiceNames = Array.from(new Set(profile.services.map(s => s.name)));
+                      return (
+                        <>
+                          {uniqueServiceNames.slice(0, 2).map(name => (
+                            <span key={name} className="text-[10px] bg-secondary text-secondary-foreground px-2 py-1 rounded-md font-medium">
+                              {name}
+                            </span>
+                          ))}
+                          {uniqueServiceNames.length > 2 && (
+                            <span className="text-[10px] bg-secondary text-secondary-foreground px-2 py-1 rounded-md font-medium">
+                              +{uniqueServiceNames.length - 2} more
+                            </span>
+                          )}
+                        </>
+                      );
+                    })()}
+                  </div>
+                  
+                  <Link href={`/profile/${profile.username}`}>
+                    <Button size="sm" className="w-full rounded-lg font-semibold bg-primary text-primary-foreground hover:bg-primary/90">
+                      View Profile
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </Popup>
+          </Marker>
         );
         })}
       </MapContainer>
