@@ -44,11 +44,12 @@ export function useProfile(id: number) {
 }
 
 export function useMyProfile() {
-  const { getToken } = useAuth();
+  const { getToken, isAuthenticated, isLoading } = useAuth();
   return useQuery({
     queryKey: [api.profiles.me.path],
     queryFn: async () => {
       const token = await getToken();
+      if (!token) return null;
       const res = await fetch(api.profiles.me.path, {
         headers: { "Authorization": `Bearer ${token}` }
       });
@@ -57,6 +58,7 @@ export function useMyProfile() {
       return api.profiles.me.responses[200].parse(await res.json());
     },
     retry: false,
+    enabled: isAuthenticated && !isLoading,
   });
 }
 

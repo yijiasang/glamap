@@ -339,48 +339,6 @@ export async function registerRoutes(
     res.status(204).send();
   });
 
-  // Zod schema for demo account creation
-  const createDemoAccountSchema = z.object({
-    username: z.string().min(3).max(30),
-    role: z.enum(["client", "provider"]).default("provider"),
-    bio: z.string().max(500).optional(),
-    location: z.string().max(200).optional(),
-    locationType: z.enum(["house", "apartment", "studio", "rented_space", "mobile"]).optional(),
-    latitude: z.number().min(-90).max(90).optional(),
-    longitude: z.number().min(-180).max(180).optional(),
-  });
-
-  app.post("/api/admin/demo-accounts", isAuthenticated, isAdmin, async (req, res) => {
-    const parsed = createDemoAccountSchema.safeParse(req.body);
-    if (!parsed.success) {
-      return res.status(400).json({ message: "Invalid input", errors: parsed.error.errors });
-    }
-    
-    const { username, role, bio, location, locationType, latitude, longitude } = parsed.data;
-    
-    // Check username uniqueness
-    const existingUsername = await storage.getProfileByUsername(username);
-    if (existingUsername) {
-      return res.status(409).json({ message: "Username already taken" });
-    }
-    
-    // Create a demo user ID
-    const demoUserId = `demo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
-    const profile = await storage.createProfile({
-      userId: demoUserId,
-      username,
-      role: role || 'provider',
-      bio: bio || 'Demo account',
-      location: location || 'Sydney, NSW',
-      locationType: locationType || 'studio',
-      latitude: latitude || -33.8688,
-      longitude: longitude || 151.2093,
-    });
-    
-    res.status(201).json(profile);
-  });
-
   // Upload endpoint for profile images
   app.post("/api/uploads/request-url", isAuthenticated, async (req, res) => {
     try {

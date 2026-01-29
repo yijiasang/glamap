@@ -1,21 +1,16 @@
-import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useMyProfile } from "@/hooks/use-profiles";
 import { useAuth } from "@/hooks/use-auth";
 import { queryClient } from "@/lib/queryClient";
-import { Users, UserCheck, MessageSquare, MapPin, Plus, Trash2, ShieldCheck, Loader2, Eye } from "lucide-react";
+import { Users, UserCheck, MessageSquare, MapPin, Trash2, ShieldCheck, Loader2, Eye } from "lucide-react";
 import { Redirect } from "wouter";
 import type { Profile } from "@shared/schema";
 
@@ -39,12 +34,6 @@ export default function Admin() {
   const { isAuthenticated, isLoading: authLoading, getToken } = useAuth();
   const { data: myProfile, isLoading: profileLoading } = useMyProfile();
   const { toast } = useToast();
-  const [newAccountOpen, setNewAccountOpen] = useState(false);
-  const [newUsername, setNewUsername] = useState("");
-  const [newRole, setNewRole] = useState<"provider" | "client">("provider");
-  const [newBio, setNewBio] = useState("");
-  const [newLocation, setNewLocation] = useState("");
-  const [newLocationType, setNewLocationType] = useState("studio");
 
   const { data: stats, isLoading: statsLoading } = useQuery<AdminStats>({
     queryKey: ["/api/admin/stats"],
@@ -107,50 +96,6 @@ export default function Admin() {
     },
   });
 
-  const createDemoMutation = useMutation({
-    mutationFn: async (data: any) => {
-      const token = await getToken();
-      const res = await fetch("/api/admin/demo-accounts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(data),
-      });
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || "Failed to create demo account");
-      }
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/profiles"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/stats"] });
-      setNewAccountOpen(false);
-      setNewUsername("");
-      setNewBio("");
-      setNewLocation("");
-      toast({ title: "Demo account created successfully" });
-    },
-    onError: (error: any) => {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
-    },
-  });
-
-  const handleCreateDemo = () => {
-    if (!newUsername.trim()) {
-      toast({ title: "Username is required", variant: "destructive" });
-      return;
-    }
-    createDemoMutation.mutate({
-      username: newUsername.trim(),
-      role: newRole,
-      bio: newBio || "Demo account",
-      location: newLocation || "Sydney, NSW",
-      locationType: newLocationType,
-    });
-  };
 
   if (authLoading || profileLoading) {
     return (
@@ -274,83 +219,6 @@ export default function Admin() {
           <TabsContent value="accounts" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold">All Accounts</h2>
-              <Dialog open={newAccountOpen} onOpenChange={setNewAccountOpen}>
-                <DialogTrigger asChild>
-                  <Button data-testid="button-add-demo">
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add Demo Account
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Create Demo Account</DialogTitle>
-                    <DialogDescription>Add a new demo account for testing purposes.</DialogDescription>
-                  </DialogHeader>
-                  <div className="space-y-4 py-4">
-                    <div>
-                      <Label>Username</Label>
-                      <Input
-                        value={newUsername}
-                        onChange={(e) => setNewUsername(e.target.value)}
-                        placeholder="demo_user"
-                        data-testid="input-demo-username"
-                      />
-                    </div>
-                    <div>
-                      <Label>Role</Label>
-                      <Select value={newRole} onValueChange={(v) => setNewRole(v as "provider" | "client")}>
-                        <SelectTrigger data-testid="select-demo-role">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="provider">Provider</SelectItem>
-                          <SelectItem value="client">Client</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label>Bio</Label>
-                      <Input
-                        value={newBio}
-                        onChange={(e) => setNewBio(e.target.value)}
-                        placeholder="Demo account bio"
-                        data-testid="input-demo-bio"
-                      />
-                    </div>
-                    <div>
-                      <Label>Location</Label>
-                      <Input
-                        value={newLocation}
-                        onChange={(e) => setNewLocation(e.target.value)}
-                        placeholder="Sydney, NSW"
-                        data-testid="input-demo-location"
-                      />
-                    </div>
-                    {newRole === "provider" && (
-                      <div>
-                        <Label>Location Type</Label>
-                        <Select value={newLocationType} onValueChange={setNewLocationType}>
-                          <SelectTrigger data-testid="select-demo-location-type">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="studio">Studio</SelectItem>
-                            <SelectItem value="house">House</SelectItem>
-                            <SelectItem value="apartment">Apartment</SelectItem>
-                            <SelectItem value="rented_space">Rented Space</SelectItem>
-                            <SelectItem value="mobile">Mobile</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    )}
-                  </div>
-                  <DialogFooter>
-                    <Button onClick={handleCreateDemo} disabled={createDemoMutation.isPending} data-testid="button-create-demo">
-                      {createDemoMutation.isPending ? "Creating..." : "Create Account"}
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
             </div>
 
             {profilesLoading ? (

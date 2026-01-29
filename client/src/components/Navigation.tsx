@@ -20,8 +20,8 @@ import { formatDistanceToNow } from "date-fns";
 
 export function Navigation() {
   const [location, setLocation] = useLocation();
-  const { user, logout, isAuthenticated, getToken } = useAuth();
-  const { data: profile } = useMyProfile();
+  const { user, logout, isAuthenticated, getToken, isLoading } = useAuth();
+  const { data: profile, isLoading: profileLoading } = useMyProfile();
   const queryClient = useQueryClient();
 
   const { data: notifications = [] } = useQuery<Notification[]>({
@@ -84,7 +84,8 @@ export function Navigation() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: [api.notifications.list.path] }),
   });
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notifications.filter((n: Notification) => !n.read).length;
+  const showProfileItems = profileLoading || !!profile;
 
   const handleNotificationClick = (notification: Notification) => {
     if (!notification.read) {
@@ -114,7 +115,9 @@ export function Navigation() {
 
         {/* Right - Messages, Notifications, Profile */}
         <div className="flex-1 flex items-center justify-end gap-2 sm:gap-3">
-          {!isAuthenticated ? (
+          {isLoading ? (
+            <div className="h-11 w-28 rounded-full bg-muted/50 animate-pulse" aria-hidden="true" />
+          ) : !isAuthenticated ? (
             <div className="flex items-center gap-2 sm:gap-3">
               <Link href="/login" className="hidden sm:block">
                 <Button variant="ghost" className="font-medium text-base">Sign In</Button>
@@ -169,7 +172,7 @@ export function Navigation() {
                         No notifications yet
                       </div>
                     ) : (
-                      notifications.map((notification) => (
+                      notifications.map((notification: Notification) => (
                         <div
                           key={notification.id}
                           className={`relative group px-3 py-3 hover:bg-muted/50 cursor-pointer border-b border-border/50 last:border-b-0 ${!notification.read ? 'bg-primary/5' : ''}`}
@@ -228,28 +231,47 @@ export function Navigation() {
                       <span>My Profile</span>
                     </Link>
                   </DropdownMenuItem>
-                  {profile && (
+                  {showProfileItems && (
                     <>
-                      <DropdownMenuItem asChild>
-                        <Link href="/edit-profile" className="cursor-pointer">
+                      {profile ? (
+                        <DropdownMenuItem asChild>
+                          <Link href="/edit-profile" className="cursor-pointer">
+                            <Pencil className="mr-2 h-4 w-4" />
+                            <span>Edit Profile</span>
+                          </Link>
+                        </DropdownMenuItem>
+                      ) : (
+                        <DropdownMenuItem disabled>
                           <Pencil className="mr-2 h-4 w-4" />
                           <span>Edit Profile</span>
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link href="/settings" className="cursor-pointer">
+                        </DropdownMenuItem>
+                      )}
+                      {profile ? (
+                        <DropdownMenuItem asChild>
+                          <Link href="/settings" className="cursor-pointer">
+                            <Settings className="mr-2 h-4 w-4" />
+                            <span>Settings</span>
+                          </Link>
+                        </DropdownMenuItem>
+                      ) : (
+                        <DropdownMenuItem disabled>
                           <Settings className="mr-2 h-4 w-4" />
                           <span>Settings</span>
-                        </Link>
-                      </DropdownMenuItem>
-                      {profile?.isAdmin && (
+                        </DropdownMenuItem>
+                      )}
+                      {profile?.isAdmin ? (
                         <DropdownMenuItem asChild>
                           <Link href="/admin" className="cursor-pointer" data-testid="link-admin">
                             <ShieldCheck className="mr-2 h-4 w-4" />
                             <span>Admin Dashboard</span>
                           </Link>
                         </DropdownMenuItem>
-                      )}
+                      ) : profileLoading ? (
+                        <DropdownMenuItem disabled>
+                          <ShieldCheck className="mr-2 h-4 w-4" />
+                          <span>Admin Dashboard</span>
+                        </DropdownMenuItem>
+                      ) : null}
                     </>
                   )}
                   <DropdownMenuSeparator />
