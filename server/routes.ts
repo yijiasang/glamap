@@ -4,6 +4,12 @@ import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { z } from "zod";
 import { setupAuth, registerAuthRoutes, isAuthenticated } from "./clerk_auth";
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const supabaseBucket = process.env.SUPABASE_BUCKET || "profile-images";
+const supabase = supabaseUrl && supabaseServiceKey ? createClient(supabaseUrl, supabaseServiceKey) : null;
 
 export async function registerRoutes(
   httpServer: Server,
@@ -361,6 +367,32 @@ export async function registerRoutes(
 
       const filename = `${fileId}.${extension}`;
       const objectPath = `/profiles/${filename}`;
+
+      if (supabase) {
+        const storagePath = `profiles/${filename}`;
+        const { data, error } = await supabase.storage
+          .from(supabaseBucket)
+          .createSignedUploadUrl(storagePath);
+
+        if (error || !data?.signedUrl) {
+          console.error("Supabase upload URL error:", error);
+          return res.status(500).json({ error: "Failed to generate upload URL" });
+        }
+
+        const publicUrl = supabase.storage
+          .from(supabaseBucket)
+          .getPublicUrl(storagePath).data.publicUrl;
+
+        return res.json({
+          uploadURL: data.signedUrl,
+          objectPath: publicUrl,
+          metadata: {
+            name: name || `upload.${extension}`,
+            size,
+            contentType: contentType || "image/jpeg",
+          },
+        });
+      }
 
       // Return a local upload URL for development
       const proto = (req.get("x-forwarded-proto") || req.protocol).split(",")[0].trim();
