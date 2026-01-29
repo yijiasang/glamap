@@ -90,11 +90,12 @@ export default function Map({ profiles, selectedId, hoveredProfileId, center = [
   const validProfiles = profiles.filter((p) => {
     const lat = typeof p.latitude === "number" ? p.latitude : Number(p.latitude);
     const lng = typeof p.longitude === "number" ? p.longitude : Number(p.longitude);
-    return (
-      Number.isFinite(lat) &&
-      Number.isFinite(lng) &&
-      p.locationType !== "mobile"
-    );
+    const locationType = p.locationType || undefined;
+    const hasSelectableLocation =
+      !!locationType && locationType !== "mobile" &&
+      (locationType === "house" || locationType === "apartment" || locationType === "studio" || locationType === "rented_space");
+    const hasLocationText = typeof p.location === "string" && p.location.trim().length > 0;
+    return Number.isFinite(lat) && Number.isFinite(lng) && hasSelectableLocation && hasLocationText;
   });
   
   const validCenter: [number, number] =
