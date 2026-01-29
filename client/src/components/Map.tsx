@@ -135,9 +135,9 @@ export default function Map({ profiles, selectedId, hoveredProfileId, center = [
           >
             <Popup className="custom-popup" closeButton={false}>
               <div className="flex flex-col">
-                <div className="h-20 bg-muted relative" />
+                <div className="h-20 bg-card relative" />
                 <div className="p-4 relative bg-card">
-                  <div className="absolute -top-8 left-4 rounded-full border-4 border-card bg-muted w-16 h-16 flex items-center justify-center text-xl font-display font-bold text-muted-foreground overflow-hidden">
+                  <div className="rounded-full border-4 border-card bg-muted w-16 h-16 flex items-center justify-center text-xl font-display font-bold text-muted-foreground overflow-hidden mb-3">
                     {profile.profileImageUrl ? (
                       <img src={profile.profileImageUrl} alt={profile.username} className="w-full h-full object-cover" />
                     ) : (
