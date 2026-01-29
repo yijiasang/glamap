@@ -87,13 +87,15 @@ interface MapProps {
 export default function Map({ profiles, selectedId, hoveredProfileId, center = [-33.8688, 151.2093], zoom = 12, isVisible = true }: MapProps) {
   // Filter out mobile providers and profiles with invalid coordinates
   // Only show providers who have a fixed location on the map
-  const validProfiles = profiles.filter(
-    (p) => p.latitude !== null && 
-           p.longitude !== null && 
-           !isNaN(p.latitude) && 
-           !isNaN(p.longitude) &&
-           p.locationType !== 'mobile' // Exclude mobile-only providers from map
-  );
+  const validProfiles = profiles.filter((p) => {
+    const lat = typeof p.latitude === "number" ? p.latitude : Number(p.latitude);
+    const lng = typeof p.longitude === "number" ? p.longitude : Number(p.longitude);
+    return (
+      Number.isFinite(lat) &&
+      Number.isFinite(lng) &&
+      p.locationType !== "mobile"
+    );
+  });
   
   const validCenter: [number, number] =
     center &&
@@ -121,10 +123,13 @@ export default function Map({ profiles, selectedId, hoveredProfileId, center = [
         />
         <MapController center={validCenter} zoom={zoom} isVisible={isVisible} />
         
-        {validProfiles.map((profile) => (
+        {validProfiles.map((profile) => {
+          const lat = typeof profile.latitude === "number" ? profile.latitude : Number(profile.latitude);
+          const lng = typeof profile.longitude === "number" ? profile.longitude : Number(profile.longitude);
+          return (
           <Marker 
             key={profile.id} 
-            position={[profile.latitude!, profile.longitude!]}
+            position={[lat, lng]}
             icon={hoveredProfileId === profile.id ? HighlightedPinkIcon : PinkIcon}
             zIndexOffset={hoveredProfileId === profile.id ? 1000 : 0}
           >
@@ -191,7 +196,8 @@ export default function Map({ profiles, selectedId, hoveredProfileId, center = [
               </div>
             </Popup>
           </Marker>
-        ))}
+        );
+        })}
       </MapContainer>
     </div>
   );
