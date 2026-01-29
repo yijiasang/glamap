@@ -70,9 +70,15 @@ export default function Map({ profiles, selectedId, hoveredProfileId, center = [
            p.locationType !== 'mobile' // Exclude mobile-only providers from map
   );
   
-  const validCenter: [number, number] = 
-    center && !isNaN(center[0]) && !isNaN(center[1]) 
-      ? center 
+  const validCenter: [number, number] =
+    center &&
+    Array.isArray(center) &&
+    center.length === 2 &&
+    typeof center[0] === "number" &&
+    typeof center[1] === "number" &&
+    Number.isFinite(center[0]) &&
+    Number.isFinite(center[1])
+      ? center
       : [-33.8688, 151.2093];
 
   return (
