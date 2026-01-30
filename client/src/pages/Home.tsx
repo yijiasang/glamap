@@ -431,12 +431,14 @@ export default function HomePage() {
 
         {/* Right - Map View */}
         <div className={`flex-1 relative bg-secondary/20 ${mobileView === 'list' ? 'hidden md:block' : 'block'}`}>
-          <Map 
-            profiles={profiles || []} 
-            center={userLocation}
-            hoveredProfileId={hoveredProfileId}
-            isVisible={!isMobile || mobileView === 'map'}
-          />
+          {(!isMobile || mobileView === 'map') && (
+            <Map 
+              profiles={profiles || []} 
+              center={userLocation}
+              hoveredProfileId={hoveredProfileId}
+              isVisible={!isMobile || mobileView === 'map'}
+            />
+          )}
         </div>
         
         {/* Mobile View Toggle */}
