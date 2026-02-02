@@ -7,7 +7,8 @@ export default function LoadingScreen() {
         <img
           src={glamapLogo}
           alt="Glamap"
-          className="h-32 sm:h-40 w-auto animate-pulse"
+          className="h-48 sm:h-64 w-auto"
+          style={{ animation: "glamapPulse 1.6s ease-in-out infinite" }}
         />
       </div>
     </div>
