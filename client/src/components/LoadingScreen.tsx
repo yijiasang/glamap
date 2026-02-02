@@ -8,7 +8,7 @@ export default function LoadingScreen() {
         <img
           src={glamapLogo}
           alt="Glamap"
-          className="h-14 w-auto"
+          className="h-24 sm:h-28 w-auto animate-pulse"
         />
         <div className="flex items-center gap-2 text-muted-foreground">
           <Loader2 className="h-4 w-4 animate-spin" />
