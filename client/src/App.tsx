@@ -23,6 +23,7 @@ import LoginPage from "@/pages/Login";
 import AboutPage from "@/pages/About";
 
 import Footer from "@/components/Footer";
+import LoadingScreen from "@/components/LoadingScreen";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -34,6 +35,7 @@ function Router() {
   const { user, isAuthenticated, isLoading } = useAuth();
   const { data: profile, isLoading: isProfileLoading } = useMyProfile();
   const [location, setLocation] = useLocation();
+  const showLoadingScreen = isLoading || (isAuthenticated && isProfileLoading);
 
   // Auth Guard: If logged in but no profile, force onboarding
   useEffect(() => {
@@ -57,6 +59,10 @@ function Router() {
     }
     return <Component {...rest} />;
   };
+
+  if (showLoadingScreen) {
+    return <LoadingScreen />;
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
