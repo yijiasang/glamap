@@ -82,6 +82,21 @@ export default function HomePage() {
   
   // In a real app, we would get this from navigator.geolocation
   const [userLocation] = useState<[number, number]>([-33.8688, 151.2093]); // Sydney, Australia
+
+  const getDistanceKm = useCallback((from: [number, number], to: [number, number]) => {
+    const toRad = (v: number) => (v * Math.PI) / 180;
+    const [lat1, lon1] = from;
+    const [lat2, lon2] = to;
+    const R = 6371; // km
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }, []);
   
   // Handle mouse drag to resize directory
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
@@ -175,6 +190,24 @@ export default function HomePage() {
         return sorted;
     }
   }, [profiles, sortBy]);
+
+  const displayProfiles = useMemo(() => {
+    if (sortedProfiles.length > 0) return sortedProfiles;
+    if (!allProfiles) return [];
+    return [...allProfiles]
+      .filter((p) => Number.isFinite(Number(p.latitude)) && Number.isFinite(Number(p.longitude)))
+      .sort((a, b) => {
+        const aLat = Number(a.latitude);
+        const aLng = Number(a.longitude);
+        const bLat = Number(b.latitude);
+        const bLng = Number(b.longitude);
+        const distA = getDistanceKm(userLocation, [aLat, aLng]);
+        const distB = getDistanceKm(userLocation, [bLat, bLng]);
+        return distA - distB;
+      });
+  }, [allProfiles, getDistanceKm, sortedProfiles, userLocation]);
+
+  const showNearestFallback = sortedProfiles.length === 0 && displayProfiles.length > 0;
   
   const handleSelectSuggestion = (value: string) => {
     setSearchTerm(value);
@@ -350,7 +383,7 @@ export default function HomePage() {
                 <Loader2 className="w-10 h-10 animate-spin mb-4 text-primary" />
                 <p>Finding beauty pros...</p>
               </div>
-            ) : sortedProfiles.length === 0 ? (
+            ) : displayProfiles.length === 0 ? (
               <div className="text-center py-20 text-muted-foreground">
                 <p>No providers found in this area.</p>
                 <Button variant="ghost" onClick={() => {setSearchTerm(""); setSelectedCategories([]); setSelectedLocationTypes([]); setSortBy("default");}}>
@@ -359,8 +392,13 @@ export default function HomePage() {
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-6">
+                {showNearestFallback && (
+                  <div className="rounded-xl border border-primary/30 bg-primary/10 px-4 py-3 text-sm text-foreground">
+                    No exact matches — showing nearest providers.
+                  </div>
+                )}
                 <AnimatePresence>
-                  {sortedProfiles.map((profile, idx) => (
+                  {displayProfiles.map((profile, idx) => (
                     <motion.div
                       key={profile.id}
                       initial={{ opacity: 0, y: 20 }}
@@ -433,7 +471,7 @@ export default function HomePage() {
         <div className={`flex-1 relative bg-secondary/20 ${mobileView === 'list' ? 'hidden md:block' : 'block'}`}>
           {(!isMobile || mobileView === 'map') && (
             <Map 
-              profiles={profiles || []} 
+              profiles={displayProfiles} 
               center={userLocation}
               hoveredProfileId={hoveredProfileId}
               isVisible={!isMobile || mobileView === 'map'}
