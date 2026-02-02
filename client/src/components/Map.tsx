@@ -38,6 +38,21 @@ const HighlightedPinkIcon = L.divIcon({
 function MapController({ center, zoom, isVisible }: { center: [number, number]; zoom: number; isVisible?: boolean }) {
   const map = useMap();
   useEffect(() => {
+    const handleResize = () => {
+      try {
+        map.invalidateSize();
+      } catch (err) {
+        console.error("Map resize invalidate error:", err);
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("orientationchange", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("orientationchange", handleResize);
+    };
+  }, [map]);
+  useEffect(() => {
     const timeout = setTimeout(() => {
       try {
         map.invalidateSize();
@@ -110,7 +125,7 @@ export default function Map({ profiles, selectedId, hoveredProfileId, center = [
       : [-33.8688, 151.2093];
 
   return (
-    <div className="w-full h-full rounded-none md:rounded-3xl overflow-hidden shadow-inner border border-border/50 relative z-0">
+    <div className="w-full h-full min-h-[60vh] md:min-h-0 rounded-none md:rounded-3xl overflow-hidden shadow-inner border border-border/50 relative z-0">
       <MapContainer 
         center={validCenter} 
         zoom={zoom} 

@@ -182,13 +182,13 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen min-h-[100dvh] flex flex-col bg-background">
+    <div className="min-h-screen h-[100dvh] flex flex-col bg-background overflow-hidden">
       <Navigation />
       
       <main className="flex-1 min-h-0 flex flex-col md:flex-row overflow-hidden relative">
         {/* Left Sidebar - List View */}
         <div 
-          className={`flex flex-col min-h-0 border-r border-border bg-card/50 backdrop-blur-sm z-10 shadow-2xl relative ${mobileView === 'map' ? 'hidden md:flex' : 'flex'} md:flex`}
+          className={`flex flex-col min-h-0 h-full border-r border-border bg-card/50 backdrop-blur-sm z-10 shadow-2xl relative ${mobileView === 'map' ? 'hidden md:flex' : 'flex'} md:flex`}
           style={{ width: typeof window !== 'undefined' && window.innerWidth >= 768 ? directoryWidth : '100%' }}
         >
           {/* Resize Handle */}

@@ -106,4 +106,4 @@ Delivered a fully functional, production-style web platform demonstrating modern
       <img src="client/public/edit-profile.png" alt="Edit Profile" width="300">
     </td>
   </tr>
-</table>
+</table> 
